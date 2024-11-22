@@ -1,0 +1,204 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAO Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e; /* Dark background */
+            color: #f5f5f5; /* Light text color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #e0e0e0; /* Light grey */
+        }
+        #daoInfo, #proposalForm, #proposalsList {
+            background-color: #333; /* Dark card background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50; /* Green button */
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049; /* Slightly darker green on hover */
+        }
+        button:disabled {
+            background-color: #888; /* Disabled state */
+            cursor: not-allowed;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #555; /* Dark border */
+            border-radius: 5px;
+            background-color: #444; /* Dark input field */
+            color: #f5f5f5; /* Light text in input */
+        }
+        input[type="text"]:focus {
+            border-color: #4CAF50; /* Green focus border */
+            outline: none;
+        }
+        .wallet-info {
+            margin-top: 10px;
+            color: #bbb; /* Lighter grey text for wallet info */
+        }
+        .proposal-item {
+            border-bottom: 1px solid #555; /* Darker border between proposals */
+            padding: 10px 0;
+            color: #ccc; /* Lighter grey for proposal text */
+        }
+        .proposal-item button {
+            background-color: #007bff; /* Blue vote button */
+            font-size: 14px;
+        }
+        .proposal-item button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>DAO Interface</h1>
+    <button id="connectWalletButton">Connect Wallet</button>
+    <div class="wallet-info" id="walletInfo">Not connected</div>
+
+    <div id="daoInfo">
+        <h2>DAO Information</h2>
+        <p><strong>DAO Name:</strong> <span id="daoName"></span></p>
+        <p><strong>Total Proposals:</strong> <span id="totalProposals">0</span></p>
+    </div>
+    
+    <div id="proposalForm">
+        <h3>Create New Proposal</h3>
+        <input type="text" id="proposalName" placeholder="Proposal Name">
+        <button id="createProposalButton" disabled>Submit Proposal</button>
+    </div>
+
+    <div id="proposalsList">
+        <h3>Proposals</h3>
+        <div id="proposalItems"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAO Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe4e1; /* Light pink background */
+            color: #00008b; /* Dark blue text color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #00008b; /* Dark blue */
+        }
+        #daoInfo, #proposalForm, #proposalsList {
+            background-color: #ffb6c1; /* Light pink card background */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00008b; /* Dark blue button */
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #000070; /* Slightly darker blue on hover */
+        }
+        button:disabled {
+            background-color: #888; /* Disabled state */
+            cursor: not-allowed;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #555; /* Dark border */
+            border-radius: 5px;
+            background-color: #ffe4e1; /* Light pink input field */
+            color: #00008b; /* Dark blue text in input */
+        }
+        input[type="text"]:focus {
+            border-color: #00008b; /* Dark blue focus border */
+            outline: none;
+        }
+        .wallet-info {
+            margin-top: 10px;
+            color: #00008b; /* Dark blue text for wallet info */
+        }
+        .proposal-item {
+            border-bottom: 1px solid #00008b; /* Dark blue border between proposals */
+            padding: 10px 0;
+            color: #00008b; /* Dark blue for proposal text */
+        }
+        .proposal-item button {
+            background-color: #ff69b4; /* Hot pink vote button */
+            font-size: 14px;
+        }
+        .proposal-item button:hover {
+            background-color: #ff1493; /* Darker pink on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>DAO Interface</h1>
+    <button id="connectWalletButton">Connect Wallet</button>
+    <div class="wallet-info" id="walletInfo">Not connected</div>
+
+    <div id="daoInfo">
+        <h2>DAO Information</h2>
+        <p><strong>DAO Name:</strong> <span id="daoName"></span></p>
+        <p><strong>Total Proposals:</strong> <span id="totalProposals">0</span></p>
+    </div>
+    
+    <div id="proposalForm">
+        <h3>Create New Proposal</h3>
+        <input type="text" id="proposalName" placeholder="Proposal Name">
+        <button id="createProposalButton" disabled>Submit Proposal</button>
+    </div>
+
+    <div id="proposalsList">
+        <h3>Proposals</h3>
+        <div id="proposalItems"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
