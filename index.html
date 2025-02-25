@@ -108,71 +108,109 @@
     <title>DAO Interface</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #ffe4e1; /* Light pink background */
-            color: #00008b; /* Dark blue text color */
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e1e2f 0%, #2a2a4a 100%); /* Dark gradient background */
+            color: #e0e0ff; /* Light text for contrast */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 40px;
+            overflow-x: hidden;
         }
         h1, h2, h3 {
-            color: #00008b; /* Dark blue */
+            color: #a1eafb; /* Soft cyan for headers */
+            text-shadow: 0 0 10px rgba(161, 234, 251, 0.5);
+        }
+        h1 {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
         }
         #daoInfo, #proposalForm, #proposalsList {
-            background-color: #ffb6c1; /* Light pink card background */
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+            background: rgba(30, 30, 47, 0.9); /* Semi-transparent dark card */
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
+            max-width: 700px;
+            margin-top: 30px;
+            border: 1px solid rgba(161, 234, 251, 0.2);
+            transition: transform 0.3s ease;
+        }
+        #daoInfo:hover, #proposalForm:hover, #proposalsList:hover {
+            transform: translateY(-5px); /* Subtle hover lift */
         }
         button {
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
-            background-color: #00008b; /* Dark blue button */
-            color: white;
+            border-radius: 25px;
+            background: linear-gradient(90deg, #ff6f61, #de4d86); /* Vibrant gradient button */
+            color: #fff;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 111, 97, 0.5);
         }
         button:hover {
-            background-color: #000070; /* Slightly darker blue on hover */
+            background: linear-gradient(90deg, #de4d86, #ff6f61); /* Reverse gradient on hover */
+            transform: scale(1.05);
         }
         button:disabled {
-            background-color: #888; /* Disabled state */
+            background: #4a4a6a; /* Muted gray for disabled */
             cursor: not-allowed;
+            box-shadow: none;
         }
         input[type="text"] {
-            width: calc(100% - 20px);
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #555; /* Dark border */
-            border-radius: 5px;
-            background-color: #ffe4e1; /* Light pink input field */
-            color: #00008b; /* Dark blue text in input */
+            width: calc(100% - 24px);
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 2px solid #a1eafb; /* Cyan border */
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0ff;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]::placeholder {
+            color: #a1eafb;
+            opacity: 0.7;
         }
         input[type="text"]:focus {
-            border-color: #00008b; /* Dark blue focus border */
+            border-color: #ff6f61; /* Coral focus border */
+            box-shadow: 0 0 10px rgba(255, 111, 97, 0.5);
             outline: none;
         }
         .wallet-info {
-            margin-top: 10px;
-            color: #00008b; /* Dark blue text for wallet info */
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #ffd700; /* Gold for wallet info */
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
         }
         .proposal-item {
-            border-bottom: 1px solid #00008b; /* Dark blue border between proposals */
-            padding: 10px 0;
-            color: #00008b; /* Dark blue for proposal text */
+            border-bottom: 1px solid rgba(161, 234, 251, 0.3);
+            padding: 15px 0;
+            color: #e0e0ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        .proposal-item:hover {
+            background: rgba(161, 234, 251, 0.1); /* Subtle hover effect */
         }
         .proposal-item button {
-            background-color: #ff69b4; /* Hot pink vote button */
+            background: linear-gradient(90deg, #6b48ff, #00ddeb); /* Unique gradient for vote button */
+            padding: 8px 15px;
             font-size: 14px;
+            border-radius: 20px;
         }
         .proposal-item button:hover {
-            background-color: #ff1493; /* Darker pink on hover */
+            background: linear-gradient(90deg, #00ddeb, #6b48ff);
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -191,7 +229,7 @@
         <h3>Create New Proposal</h3>
         <input type="text" id="proposalName" placeholder="Proposal Name">
         <button id="createProposalButton" disabled>Submit Proposal</button>
-    </div>
+    </div>  
 
     <div id="proposalsList">
         <h3>Proposals</h3>
@@ -202,3 +240,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+

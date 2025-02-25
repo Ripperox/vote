@@ -6,13 +6,26 @@ const createProposalButton = document.getElementById('createProposalButton');
 const proposalItems = document.getElementById('proposalItems');
 
 // DAO Contract details
-const daoContractAddress = '0xd2417b91eb72a10debbb281697d04f172b888f9f'; // Replace with your contract address
+const daoContractAddress = '0x92382d1d6d19095217b4de2a8edf452f1e6c55fc'; // Replace with your contract address
 const daoAbi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_member",
+				"type": "address"
+			}
+		],
+		"name": "addMember",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
-				"name": "description",
+				"name": "_description",
 				"type": "string"
 			}
 		],
@@ -22,10 +35,34 @@ const daoAbi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "proposalId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			}
+		],
+		"name": "ProposalCreated",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "proposalId",
+				"name": "_proposalId",
 				"type": "uint256"
 			}
 		],
@@ -35,10 +72,29 @@ const daoAbi = [
 		"type": "function"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "proposalId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			}
+		],
+		"name": "Voted",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "proposalId",
+				"name": "_proposalId",
 				"type": "uint256"
 			}
 		],
@@ -60,12 +116,44 @@ const daoAbi = [
 	},
 	{
 		"inputs": [],
-		"name": "proposalCount",
+		"name": "getProposalCount",
 		"outputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "members",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -95,7 +183,7 @@ const daoAbi = [
 		"stateMutability": "view",
 		"type": "function"
 	}
-];
+]
 
 let provider;
 let signer;
@@ -119,14 +207,22 @@ async function connectWallet() {
         connectWalletButton.textContent = "Wallet Connected";
         connectWalletButton.disabled = true;
 
-        createProposalButton.disabled = false;
-
         connectToContract();
         loadDaoInfo();
+
+        // Check if user is a member
+        const isMember = await daoContract.members(address);
+        if (!isMember) {
+            alert("You are not a DAO member. Ask the owner to add you.");
+            createProposalButton.disabled = true;
+        } else {
+            createProposalButton.disabled = false;
+        }
     } catch (error) {
         console.error("Wallet connection failed:", error);
     }
 }
+
 
 // Connect to the DAO smart contract
 function connectToContract() {
