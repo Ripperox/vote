@@ -1,20 +1,33 @@
 {
-  "name": "dao",
+  "name": "dao-governance",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "On-chain DAO governance dApp — Solidity contracts (DAO + GovernanceToken) with a static ethers.js frontend.",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "lite-server"
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:e2e": "playwright test",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "start": "serve . -p 3000"
   },
-  "keywords": [],
+  "keywords": [
+    "dao",
+    "governance",
+    "ethereum",
+    "solidity",
+    "hardhat",
+    "ethers"
+  ],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "ethers": "^6.13.4",
     "web3": "^4.14.0"
   },
   "devDependencies": {
-    "lite-server": "^2.6.1"
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@playwright/test": "^1.60.0",
+    "hardhat": "^2.22.17",
+    "serve": "^14.2.6"
   }
 }

@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Hardhat
+artifacts/
+cache/
+typechain-types/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Secrets & env
+.env
+.env.*
+!.env.example
+
+# Misc
+*.log
+.DS_Store
+
+# Stale npm lockfile (this project uses bun)
+package-lock.json
