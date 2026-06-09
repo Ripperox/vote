@@ -66,6 +66,30 @@
   </section>
 
   <!-- ============================================================
+       OWNER ADMIN PANEL (shown only to contract owner)
+  ============================================================ -->
+  <div id="adminPanel" class="admin-panel" style="display:none;" aria-label="Owner admin panel">
+    <div class="admin-inner">
+      <div class="admin-badge">&#x1F511; Owner</div>
+      <div class="admin-content">
+        <p class="admin-desc">You are the contract owner. Add wallet addresses as DAO members.</p>
+        <div class="admin-form">
+          <input
+            id="memberAddressInput"
+            type="text"
+            class="admin-input"
+            placeholder="0x... wallet address to add as member"
+            spellcheck="false"
+            autocomplete="off"
+          />
+          <button id="addMemberBtn" class="btn-add-member">Add Member</button>
+          <button id="addSelfBtn" class="btn-add-self">Add Myself</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
        MAIN CONTENT
   ============================================================ -->
   <main>

@@ -950,6 +950,115 @@ main {
 }
 
 /* ============================================================
+   OWNER ADMIN PANEL
+============================================================ */
+.admin-panel {
+  max-width: 900px;
+  margin: 0 auto 0;
+  padding: 0 32px;
+}
+
+.admin-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(234, 179, 8, 0.06);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: var(--radius-lg);
+}
+
+.admin-badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.admin-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-desc {
+  font-size: 13px;
+  color: #d4a017;
+  margin: 0 0 10px;
+}
+
+.admin-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-input {
+  flex: 1;
+  min-width: 200px;
+  background: var(--bg);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: monospace;
+  transition: border-color var(--transition-fast);
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: #fbbf24;
+}
+
+.admin-input::placeholder {
+  color: var(--text-muted);
+  font-family: inherit;
+}
+
+.btn-add-member,
+.btn-add-self {
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-add-member {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  color: #fbbf24;
+}
+
+.btn-add-member:hover:not(:disabled) {
+  background: rgba(234, 179, 8, 0.25);
+}
+
+.btn-add-self {
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  color: var(--accent-light);
+}
+
+.btn-add-self:hover:not(:disabled) {
+  background: rgba(124, 58, 237, 0.25);
+}
+
+.btn-add-member:disabled,
+.btn-add-self:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ============================================================
    SCROLLBAR
 ============================================================ */
 ::-webkit-scrollbar {

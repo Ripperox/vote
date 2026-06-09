@@ -120,6 +120,7 @@ let signer      = null;
 let contract    = null;
 let userAddress = null;
 let isMember    = false;
+let isOwner     = false;
 let activeTab   = 'active';
 let proposals   = [];  // Array<{ id, description, voteCount, state, hasVoted }>
 
@@ -143,6 +144,10 @@ const submitProposalBtn = document.getElementById('submitProposalBtn');
 const proposalDescInput = document.getElementById('proposalDesc');
 const toastContainer    = document.getElementById('toastContainer');
 const tabButtons        = document.querySelectorAll('.tab-btn');
+const adminPanel        = document.getElementById('adminPanel');
+const memberAddressInput = document.getElementById('memberAddressInput');
+const addMemberBtn      = document.getElementById('addMemberBtn');
+const addSelfBtn        = document.getElementById('addSelfBtn');
 
 // ============================================================
 //  INITIALIZATION
@@ -221,22 +226,24 @@ async function checkMembership() {
   if (!contract || !userAddress) return;
 
   try {
-    isMember = await contract.members(userAddress);
+    [isMember, isOwner] = await Promise.all([
+      contract.members(userAddress),
+      contract.owner().then((o) => o.toLowerCase() === userAddress.toLowerCase()),
+    ]);
   } catch (err) {
     console.error('checkMembership:', err);
     isMember = false;
+    isOwner  = false;
   }
 
   const power = isMember ? '1' : '0';
   myVotingPowerEl.textContent  = power;
   votingPowerChip.textContent  = `${power} Vote${isMember ? '' : 's'}`;
   createProposalBtn.disabled   = !isMember;
+  createProposalBtn.title      = isMember ? '' : 'You must be a DAO member to create proposals';
 
-  if (!isMember) {
-    createProposalBtn.title = 'You must be a DAO member to create proposals';
-  } else {
-    createProposalBtn.title = '';
-  }
+  // Show admin panel to the contract owner
+  if (adminPanel) adminPanel.style.display = isOwner ? 'block' : 'none';
 }
 
 function handleAccountsChanged(accounts) {
@@ -461,6 +468,53 @@ async function createProposal() {
   } finally {
     submitProposalBtn.disabled = false;
     submitProposalBtn.textContent = 'Submit Proposal';
+  }
+}
+
+// ============================================================
+//  OWNER: ADD MEMBER
+// ============================================================
+
+async function addMember(address) {
+  if (!contract || !isOwner) {
+    showToast('Only the contract owner can add members.', 'error');
+    return;
+  }
+
+  if (!ethers.utils.isAddress(address)) {
+    showToast('Invalid Ethereum address.', 'error');
+    return;
+  }
+
+  addMemberBtn.disabled = true;
+  addSelfBtn.disabled   = true;
+
+  const pendingId = showToast(`Adding ${truncateAddress(address)} as member — confirm in MetaMask…`, 'pending');
+
+  try {
+    const tx = await contract.addMember(address);
+    dismissToast(pendingId);
+
+    const waitId = showToast('Transaction submitted — awaiting confirmation…', 'pending');
+    await tx.wait();
+    dismissToast(waitId);
+
+    showToast(`Member added successfully!`, 'success');
+    memberAddressInput.value = '';
+
+    // Refresh membership if the added address is our own
+    await checkMembership();
+  } catch (err) {
+    dismissToast(pendingId);
+    if (err?.code === 4001) {
+      showToast('Transaction rejected by user.', 'error');
+    } else {
+      const msg = err?.reason || err?.message || 'Unknown error';
+      showToast(`Failed to add member: ${truncateError(msg)}`, 'error');
+    }
+  } finally {
+    addMemberBtn.disabled = false;
+    addSelfBtn.disabled   = false;
   }
 }
 
@@ -791,6 +845,24 @@ function escapeHtml(str) {
 // ============================================================
 
 connectBtn.addEventListener('click', connectWallet);
+
+// Admin panel wiring
+if (addMemberBtn) {
+  addMemberBtn.addEventListener('click', () => {
+    addMember(memberAddressInput.value.trim());
+  });
+}
+if (addSelfBtn) {
+  addSelfBtn.addEventListener('click', () => {
+    if (userAddress) addMember(userAddress);
+    else showToast('Connect your wallet first.', 'error');
+  });
+}
+if (memberAddressInput) {
+  memberAddressInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addMember(memberAddressInput.value.trim());
+  });
+}
 
 createProposalBtn.addEventListener('click', openModal);
 closeModalBtn.addEventListener('click', closeModal);
