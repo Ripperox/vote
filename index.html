@@ -14,8 +14,17 @@
 </head>
 <body>
 
-  <!-- Toast container (slides in from top-right) -->
+  <!-- Toast container -->
   <div id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- ============================================================
+       NETWORK WARNING BANNER
+  ============================================================ -->
+  <div id="networkBanner" class="network-banner" style="display:none;" role="alert">
+    <span class="network-banner-icon">⚠️</span>
+    <span>Wrong network — this app runs on <strong>Sepolia testnet</strong>.</span>
+    <button id="switchNetworkBtn" class="btn-switch-network">Switch to Sepolia</button>
+  </div>
 
   <!-- ============================================================
        HEADER
@@ -34,12 +43,68 @@
 
       <div class="header-actions">
         <div class="voting-power-chip" id="votingPower">0 Votes</div>
-        <button id="connectBtn" aria-label="Connect MetaMask wallet">
-          Connect Wallet
-        </button>
+
+        <!-- Wallet button — two states: disconnected / connected dropdown -->
+        <div class="wallet-wrapper" id="walletWrapper">
+          <!-- Disconnected state -->
+          <button id="connectBtn" aria-label="Connect MetaMask wallet">
+            Connect Wallet
+          </button>
+
+          <!-- Connected state (hidden until connected) -->
+          <div id="walletMenu" class="wallet-menu" style="display:none;">
+            <button id="walletMenuBtn" class="wallet-menu-btn" aria-haspopup="true" aria-expanded="false">
+              <span class="btn-dot connected-dot"></span>
+              <span id="walletAddress">0x…</span>
+              <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div id="walletDropdown" class="wallet-dropdown" style="display:none;" role="menu">
+              <div class="wallet-dropdown-addr" id="walletDropdownFull"></div>
+              <button class="wallet-dropdown-item" id="copyAddressBtn" role="menuitem">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 10V2h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Copy Address
+              </button>
+              <button class="wallet-dropdown-item" id="viewExplorerBtn" role="menuitem">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M6 2H2v10h10V8M8 2h4v4M8 6l4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                View on Etherscan
+              </button>
+              <div class="wallet-dropdown-divider"></div>
+              <button class="wallet-dropdown-item disconnect-item" id="disconnectBtn" role="menuitem">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2l3 3-3 3M12 5H6M5 2H2v10h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Disconnect
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
+
+  <!-- ============================================================
+       OWNER ADMIN PANEL
+  ============================================================ -->
+  <div id="adminPanel" class="admin-panel" style="display:none;" aria-label="Owner admin panel">
+    <div class="admin-inner">
+      <div class="admin-badge">&#x1F511; Owner</div>
+      <div class="admin-content">
+        <p class="admin-desc">You are the contract owner. Add wallet addresses as DAO members.</p>
+        <div class="admin-form">
+          <input
+            id="memberAddressInput"
+            type="text"
+            class="admin-input"
+            placeholder="0x... wallet address to add as member"
+            spellcheck="false"
+            autocomplete="off"
+          />
+          <button id="addMemberBtn" class="btn-add-member">Add Member</button>
+          <button id="addSelfBtn" class="btn-add-self">Add Myself</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ============================================================
        STATS BAR
@@ -66,35 +131,10 @@
   </section>
 
   <!-- ============================================================
-       OWNER ADMIN PANEL (shown only to contract owner)
-  ============================================================ -->
-  <div id="adminPanel" class="admin-panel" style="display:none;" aria-label="Owner admin panel">
-    <div class="admin-inner">
-      <div class="admin-badge">&#x1F511; Owner</div>
-      <div class="admin-content">
-        <p class="admin-desc">You are the contract owner. Add wallet addresses as DAO members.</p>
-        <div class="admin-form">
-          <input
-            id="memberAddressInput"
-            type="text"
-            class="admin-input"
-            placeholder="0x... wallet address to add as member"
-            spellcheck="false"
-            autocomplete="off"
-          />
-          <button id="addMemberBtn" class="btn-add-member">Add Member</button>
-          <button id="addSelfBtn" class="btn-add-self">Add Myself</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================
        MAIN CONTENT
   ============================================================ -->
   <main>
     <div class="content-header">
-      <!-- Tab navigation -->
       <nav class="tabs" role="tablist" aria-label="Filter proposals by state">
         <button class="tab-btn active" data-tab="active"    role="tab" aria-selected="true">Active</button>
         <button class="tab-btn"        data-tab="pending"   role="tab" aria-selected="false">Pending</button>
@@ -102,26 +142,29 @@
         <button class="tab-btn"        data-tab="defeated"  role="tab" aria-selected="false">Defeated</button>
       </nav>
 
-      <button id="createProposalBtn" class="btn-create" disabled aria-haspopup="dialog">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        New Proposal
-      </button>
+      <div class="content-actions">
+        <button id="refreshBtn" class="btn-refresh" title="Refresh proposals" aria-label="Refresh proposals">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M12 7A5 5 0 1 1 7 2c1.5 0 2.9.66 3.87 1.7L13 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 2v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button id="createProposalBtn" class="btn-create" disabled aria-haspopup="dialog">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          New Proposal
+        </button>
+      </div>
     </div>
 
-    <!-- Proposal cards render here -->
     <div id="proposalsContainer" role="list" aria-label="Proposals"></div>
   </main>
 
   <!-- ============================================================
        CREATE PROPOSAL MODAL
   ============================================================ -->
-  <div
-    id="modalOverlay"
-    class="modal-overlay"
-    aria-hidden="true"
-  ></div>
+  <div id="modalOverlay" class="modal-overlay" aria-hidden="true"></div>
 
   <div
     id="proposalModal"
@@ -133,13 +176,8 @@
   >
     <div class="modal-header">
       <h2 class="modal-title" id="modalTitle">Create Proposal</h2>
-      <button
-        id="closeModalBtn"
-        class="modal-close"
-        aria-label="Close dialog"
-      >&#x2715;</button>
+      <button id="closeModalBtn" class="modal-close" aria-label="Close dialog">&#x2715;</button>
     </div>
-
     <div class="modal-body">
       <label class="field-label" for="proposalDesc">Proposal Description</label>
       <textarea
@@ -148,18 +186,14 @@
         placeholder="Describe what this proposal aims to achieve and why members should support it..."
         rows="5"
       ></textarea>
-      <p class="field-hint">
-        Be clear and specific. This description will be stored permanently on-chain.
-      </p>
+      <p class="field-hint">Be clear and specific. This description will be stored permanently on-chain.</p>
     </div>
-
     <div class="modal-footer">
       <button id="cancelModalBtn" class="btn-secondary">Cancel</button>
       <button id="submitProposalBtn" class="btn-primary">Submit Proposal</button>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
